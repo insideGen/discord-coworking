@@ -1,0 +1,65 @@
+{
+  "name": "@discord-coworking/discord-app",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "targets": {
+      "build": {
+        "executor": "@nx/esbuild:esbuild",
+        "outputs": [
+          "{options.outputPath}"
+        ],
+        "defaultConfiguration": "production",
+        "options": {
+          "platform": "node",
+          "outputPath": "apps/discord-app/dist",
+          "format": [
+            "cjs"
+          ],
+          "bundle": false,
+          "main": "apps/discord-app/src/main.ts",
+          "tsConfig": "apps/discord-app/tsconfig.app.json",
+          "assets": [
+            "apps/discord-app/src/assets"
+          ],
+          "esbuildOptions": {
+            "sourcemap": true,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        },
+        "configurations": {
+          "development": {},
+          "production": {
+            "esbuildOptions": {
+              "sourcemap": false,
+              "outExtension": {
+                ".js": ".js"
+              }
+            }
+          }
+        }
+      },
+      "serve": {
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "development",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "@discord-coworking/discord-app:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "development": {
+            "buildTarget": "@discord-coworking/discord-app:build:development"
+          },
+          "production": {
+            "buildTarget": "@discord-coworking/discord-app:build:production"
+          }
+        }
+      }
+    }
+  }
+}
