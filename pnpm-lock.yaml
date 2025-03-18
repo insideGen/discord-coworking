@@ -44,6 +44,12 @@ importers:
 
   apps/discord-app: {}
 
+  packages/discord-ts:
+    dependencies:
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+
 packages:
 
   '@ampproject/remapping@2.3.0':
