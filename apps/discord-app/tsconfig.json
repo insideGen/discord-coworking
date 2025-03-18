@@ -4,6 +4,9 @@
   "include": [],
   "references": [
     {
+      "path": "../../packages/discord-ts"
+    },
+    {
       "path": "./tsconfig.app.json"
     }
   ]

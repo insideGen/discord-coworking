@@ -11,5 +11,10 @@
   "include": [
     "src/**/*.ts"
   ],
-  "exclude": []
+  "exclude": [],
+  "references": [
+    {
+      "path": "../../packages/discord-ts/tsconfig.lib.json"
+    }
+  ]
 }

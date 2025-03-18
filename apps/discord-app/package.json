@@ -61,5 +61,8 @@
         }
       }
     }
+  },
+  "dependencies": {
+    "@discord-coworking/discord-ts": "workspace:*"
   }
 }

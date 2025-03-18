@@ -42,7 +42,11 @@ importers:
         specifier: ~5.7.2
         version: 5.7.3
 
-  apps/discord-app: {}
+  apps/discord-app:
+    dependencies:
+      '@discord-coworking/discord-ts':
+        specifier: workspace:*
+        version: link:../../packages/discord-ts
 
   packages/discord-ts:
     dependencies:
