@@ -1,0 +1,29 @@
+volumes:
+  db-data:
+  node-modules:
+  nx-cache:
+  nx-data:
+  pnpm-store:
+
+services:
+  dev-container:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../:/workspace/:cached
+      - node-modules:/workspace/node_modules/
+      - nx-cache:/workspace/.nx/cache/
+      - nx-data:/workspace/.nx/workspace-data/
+      - pnpm-store:/workspace/.pnpm-store/
+    command: sleep infinity
+  db-container:
+    image: postgres:15-bookworm
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+      - PGDATA=/var/lib/postgresql/data/pgdata/
+    volumes:
+      - db-data:/var/lib/postgresql/data/
+    ports:
+      - 5433:5432

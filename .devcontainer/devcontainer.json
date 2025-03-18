@@ -1,0 +1,24 @@
+// https://aka.ms/devcontainer.json
+// https://containers.dev/guide/dockerfile
+{
+    "name": "${localWorkspaceFolderBasename}",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "denoland.vscode-deno",
+                "ms-vscode.makefile-tools",
+                "ms-azuretools.vscode-docker",
+                "ms-python.python",
+                "ms-python.debugpy",
+                "ms-python.vscode-pylance",
+                "ms-python.autopep8",
+                "nrwl.angular-console",
+                "oven.bun-vscode",
+                "redhat.vscode-xml"
+            ]
+        }
+    },
+    "dockerComposeFile": "docker-compose.yaml",
+    "service": "dev-container",
+    "workspaceFolder": "/workspace/"
+}
