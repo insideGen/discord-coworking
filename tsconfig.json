@@ -4,7 +4,7 @@
   "files": [],
   "references": [
     {
-      "path": "./apps/discord-app"
+      "path": "./apps/bot-app"
     },
     {
       "path": "./packages/discord-ts"

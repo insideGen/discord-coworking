@@ -1,1 +1,1 @@
-export * from './lib/discord-ts.js';
+export * from './lib/helper.js';

@@ -1,7 +1,8 @@
 {
-  "name": "@discord-coworking/discord-app",
+  "name": "@discord-coworking/bot-app",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "nx": {
     "targets": {
       "build": {
@@ -12,15 +13,19 @@
         "defaultConfiguration": "production",
         "options": {
           "platform": "node",
-          "outputPath": "apps/discord-app/dist",
+          "outputPath": "apps/bot-app/dist",
           "format": [
-            "cjs"
+            "esm"
           ],
           "bundle": false,
-          "main": "apps/discord-app/src/main.ts",
-          "tsConfig": "apps/discord-app/tsconfig.app.json",
+          "main": "apps/bot-app/src/main.ts",
+          "tsConfig": "apps/bot-app/tsconfig.app.json",
           "assets": [
-            "apps/discord-app/src/assets"
+            {
+              "input": "apps/bot-app/src/modules/pomodoro/assets/",
+              "glob": "**/!(*.ts)",
+              "output": "assets"
+            }
           ],
           "esbuildOptions": {
             "sourcemap": true,
@@ -48,21 +53,24 @@
           "build"
         ],
         "options": {
-          "buildTarget": "@discord-coworking/discord-app:build",
+          "buildTarget": "@discord-coworking/bot-app:build",
           "runBuildTargetDependencies": false
         },
         "configurations": {
           "development": {
-            "buildTarget": "@discord-coworking/discord-app:build:development"
+            "buildTarget": "@discord-coworking/bot-app:build:development"
           },
           "production": {
-            "buildTarget": "@discord-coworking/discord-app:build:production"
+            "buildTarget": "@discord-coworking/bot-app:build:production"
           }
         }
       }
     }
   },
   "dependencies": {
-    "@discord-coworking/discord-ts": "workspace:*"
+    "@discord-coworking/discord-ts": "workspace:*",
+    "@discordjs/voice": "^0.18.0",
+    "discord.js": "^14.18.0",
+    "libsodium-wrappers": "^0.7.15"
   }
 }
