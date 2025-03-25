@@ -14,22 +14,9 @@ Exécutez la commande suivante pour installer les dépendances :
 pnpm install
 ```
 
-## Application bot
+## Applications
 
-Dans le dossier `apps/bot-app/`, dupliquez le fichier `.env.example` en `.env` et complétez son contenu :
-
-```sh
-# DISCORD
-DISCORD_CLIENT_ID=
-DISCORD_TOKEN=
-DISCORD_GUILD=
-```
-
-Exécutez la commande suivante pour lancer le bot :
-
-```sh
-pnpm exec nx run @discord-coworking/bot-app:serve
-```
+- [bot-app](apps/bot-app/)
 
 ## Mémo
 
