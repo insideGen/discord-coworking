@@ -8,7 +8,7 @@ export enum NotificationSound
     Break = 'apps/bot-app/dist/assets/notification.wav',
 }
 
-export class VoiceNotification extends EventEmitter<{ finish: []; }>
+export class VoiceNotification extends EventEmitter<{ finished: []; }>
 {
     public readonly voiceChannel: VoiceChannel;
     public readonly notificationSound: NotificationSound;
@@ -24,7 +24,7 @@ export class VoiceNotification extends EventEmitter<{ finish: []; }>
         {
             if (newState.status === AudioPlayerStatus.AutoPaused || newState.status === AudioPlayerStatus.Idle)
             {
-                this.emit('finish');
+                this.emit('finished');
             }
         });
     }
@@ -35,7 +35,7 @@ export class NotificationManager
     private static _queue: Array<VoiceNotification> = [];
     private static _busy: boolean = false;
 
-    private static _compute(force: boolean = false): void
+    private static _processing(force: boolean = false): void
     {
         if (NotificationManager._busy && !force) return;
 
@@ -44,7 +44,7 @@ export class NotificationManager
         const voiceNotification = NotificationManager._queue.shift();
         if (voiceNotification != null)
         {
-            let voiceConnection = getVoiceConnection(voiceNotification.voiceChannel.guild.id) ?? null;
+            let voiceConnection = getVoiceConnection(voiceNotification.voiceChannel.guild.id);
             if (voiceConnection == null || voiceConnection.state.status !== VoiceConnectionStatus.Ready)
             {
                 voiceConnection = joinVoiceChannel({
@@ -53,12 +53,12 @@ export class NotificationManager
                     channelId: voiceNotification.voiceChannel.id
                 });
             }
-            const onStateChange = function (oldState: VoiceConnectionState, newState: VoiceConnectionState)
+            const onStateChange = (oldState: VoiceConnectionState, newState: VoiceConnectionState): void =>
             {
                 if (newState.status === VoiceConnectionStatus.Ready)
                 {
                     voiceConnection.off('stateChange', onStateChange);
-                    const playerSubscription = voiceConnection.subscribe(voiceNotification.audioPlayer) ?? null;
+                    const playerSubscription = voiceConnection.subscribe(voiceNotification.audioPlayer);
                     const resource = createAudioResource(voiceNotification.notificationSound.toString());
                     voiceNotification.audioPlayer.on('stateChange', (oldState, newState) =>
                     {
@@ -68,7 +68,7 @@ export class NotificationManager
                             voiceConnection.disconnect();
                             if (NotificationManager._queue.length > 0)
                             {
-                                NotificationManager._compute(true);
+                                NotificationManager._processing(true);
                             }
                             else
                             {
@@ -86,9 +86,9 @@ export class NotificationManager
     public static async notify(voiceChannel: VoiceChannel, notificationSound: NotificationSound): Promise<void>
     {
         const voiceNotification = new VoiceNotification(voiceChannel, notificationSound);
-        const next = new Promise<void>((resolve, reject) => voiceNotification.on('finish', resolve));
+        const next = new Promise<void>((resolve, reject) => voiceNotification.on('finished', resolve));
         NotificationManager._queue.push(voiceNotification);
-        NotificationManager._compute();
+        NotificationManager._processing();
         return next;
     }
 }

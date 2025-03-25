@@ -4,8 +4,8 @@ import { NotificationManager, NotificationSound } from './NotificationManager.js
 
 export enum PomodoroVoiceChannelMode
 {
-    Work = 'Work',
-    Break = 'Break',
+    Work = 'work',
+    Break = 'break',
 }
 
 export class PomodoroVoiceChannel
@@ -68,8 +68,7 @@ export class PomodoroVoiceChannel
         this._breakTime = breakTime;
         this._currentMode = PomodoroVoiceChannelMode.Break;
         this._timeLeft = this._breakTime;
-        this._timeoutId = setTimeout(this.delete.bind(this), 10_000);
-        this.start();
+        this._timeoutId = setTimeout(this.delete.bind(this), 20_000);
     }
 
     private async _tick(): Promise<void>
@@ -95,9 +94,10 @@ export class PomodoroVoiceChannel
                 }
 
                 this.stop();
-                await NotificationManager.notify(this._channel, NotificationSound.Work);
+                await NotificationManager.notify(this._channel, this.mute ? NotificationSound.Work : NotificationSound.Break);
                 this.start();
 
+                // this._channel can be null after waiting NotificationManager.notify()
                 if (this._channel != null)
                 {
                     this._channel.members.filter((member) => member.user.bot === false).forEach(async (member): Promise<void> =>
@@ -132,7 +132,7 @@ export class PomodoroVoiceChannel
             clearInterval(this._intervalId);
             this._intervalId = null;
         }
-        this._intervalId = setInterval(this._tick.bind(this), 1_000);
+        this._intervalId = setInterval(this._tick.bind(this), 60_000);
     }
 
     public stop(): void

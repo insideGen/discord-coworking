@@ -1,8 +1,8 @@
 import { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, CategoryChannel, ChannelType, Client, DMChannel, EmbedBuilder, Events, Interaction, MessageFlags, ModalBuilder, NonThreadGuildBasedChannel, SlashCommandBuilder, TextInputBuilder, TextInputStyle, VoiceState } from 'discord.js';
 
+import { getCommandId } from '@discord-coworking/discord-ts';
 import { IDiscordAppModule } from '../index.js';
 import { PomodoroVoiceChannel } from './PomodoroVoiceChannel.js';
-import { getCommandId } from '@discord-coworking/discord-ts';
 
 export default class PomodoroVoiceChannels implements IDiscordAppModule
 {
@@ -32,15 +32,6 @@ export default class PomodoroVoiceChannels implements IDiscordAppModule
     private async replyPomodoro(interaction: Interaction): Promise<void>
     {
         if (!interaction.isChatInputCommand()) return;
-        const create = new ButtonBuilder()
-            .setCustomId('pomodoroEdit')
-            .setLabel('Créer un salon')
-            .setStyle(ButtonStyle.Primary);
-
-        const row = new ActionRowBuilder<ButtonBuilder>()
-            .addComponents(create);
-
-        const file = new AttachmentBuilder('apps/bot-app/dist/assets/pomodoro.png');
 
         const embed = new EmbedBuilder()
             .setTitle('Salon vocal Pomodoro')
@@ -55,6 +46,16 @@ export default class PomodoroVoiceChannels implements IDiscordAppModule
                 { name: '\u200B', value: '\u200B', inline: true },
             );
 
+        const file = new AttachmentBuilder('apps/bot-app/dist/assets/pomodoro.png');
+
+        const create = new ButtonBuilder()
+            .setCustomId('pomodoroEdit')
+            .setLabel('Créer un Pomodoro')
+            .setStyle(ButtonStyle.Primary);
+
+        const row = new ActionRowBuilder<ButtonBuilder>()
+            .addComponents(create);
+
         await interaction.reply({
             embeds: [embed],
             files: [file],
@@ -65,6 +66,7 @@ export default class PomodoroVoiceChannels implements IDiscordAppModule
     private async replyPomodoroEdit(interaction: Interaction): Promise<void>
     {
         if (!interaction.isButton()) return;
+
         const modal = new ModalBuilder()
             .setCustomId('pomodoroCreate')
             .setTitle('Réglage du Pomodoro');
@@ -113,6 +115,7 @@ export default class PomodoroVoiceChannels implements IDiscordAppModule
     private async replyPomodoroCreate(interaction: Interaction): Promise<void>
     {
         if (!interaction.isModalSubmit()) return;
+        
         const guild = interaction.guild;
         if (guild != null)
         {
@@ -138,8 +141,8 @@ export default class PomodoroVoiceChannels implements IDiscordAppModule
                 const channel = await guild.channels.create({
                     parent: category,
                     type: ChannelType.GuildVoice,
-                    name: `📝 ${workTime}' / 💬 ${breakTime}'`, // ${interaction.user.username}
-                    userLimit: userLimit + 1
+                    name: `📝 ${workTime}' / 💬 ${breakTime}'`,
+                    userLimit: userLimit
                 });
 
                 this._pomodoroChannels.set(channel.id, new PomodoroVoiceChannel(channel, workTime, breakTime));
@@ -161,7 +164,7 @@ export default class PomodoroVoiceChannels implements IDiscordAppModule
             const pomodoroChannel = this._pomodoroChannels.get(channel.id);
             if (pomodoroChannel != null)
             {
-                console.log(`[Pomodo.onChannelDelete] Delete ${channel.name} channel.`);
+                // console.log(`[Pomodo.onChannelDelete] Delete ${channel.name} channel.`);
                 pomodoroChannel.delete(false);
                 this._pomodoroChannels.delete(channel.id);
             }
@@ -177,11 +180,6 @@ export default class PomodoroVoiceChannels implements IDiscordAppModule
             if (command != null)
             {
                 command(interaction);
-            }
-            else
-            {
-                console.error(`[Pomodo.onInteractionCreate] No command matching ${commandId} was found.`);
-                return;
             }
         }
     }

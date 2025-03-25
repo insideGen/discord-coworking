@@ -10,5 +10,5 @@ export interface IDiscordAppModule
 }
 
 export const modules: IDiscordAppModule[] = [
-    new PomodoroVoiceChannels()
+    new PomodoroVoiceChannels(),
 ];

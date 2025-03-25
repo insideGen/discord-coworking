@@ -22,7 +22,7 @@
           "tsConfig": "apps/bot-app/tsconfig.app.json",
           "assets": [
             {
-              "input": "apps/bot-app/src/modules/pomodoro/assets/",
+              "input": "apps/bot-app/src/modules/pomodoro-voice-channels/assets/",
               "glob": "**/!(*.ts)",
               "output": "assets"
             }
