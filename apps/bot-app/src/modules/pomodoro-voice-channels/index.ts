@@ -1,17 +1,17 @@
 import { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, ButtonStyle, CategoryChannel, ChannelType, Client, DMChannel, EmbedBuilder, Events, Interaction, MessageFlags, ModalBuilder, NonThreadGuildBasedChannel, SlashCommandBuilder, TextInputBuilder, TextInputStyle, VoiceState } from 'discord.js';
 
 import { IDiscordAppModule } from '../index.js';
-import { PomodoroChannel } from './PomodoroChannel.js';
+import { PomodoroVoiceChannel } from './PomodoroVoiceChannel.js';
 import { getCommandId } from '@discord-coworking/discord-ts';
 
-export default class Pomodoro implements IDiscordAppModule
+export default class PomodoroVoiceChannels implements IDiscordAppModule
 {
     public readonly CATEGORY_NAME: string = '🍅 Pomodoro';
 
     public slashCommands: SlashCommandBuilder[];
 
     private _interactionCommands: Map<string, (interaction: Interaction) => Promise<void>>;
-    private _pomodoroChannels: Map<string, PomodoroChannel> = new Map();
+    private _pomodoroChannels: Map<string, PomodoroVoiceChannel> = new Map();
     private _client: Client | null = null;
 
     public constructor()
@@ -142,7 +142,7 @@ export default class Pomodoro implements IDiscordAppModule
                     userLimit: userLimit + 1
                 });
 
-                this._pomodoroChannels.set(channel.id, new PomodoroChannel(channel, workTime, breakTime));
+                this._pomodoroChannels.set(channel.id, new PomodoroVoiceChannel(channel, workTime, breakTime));
 
                 await interaction.editReply({ content: `Voici le salon créé pour toi :\n> ${channel?.url}\nClique dessus pour le rejoindre !` });
             }

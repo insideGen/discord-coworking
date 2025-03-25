@@ -2,18 +2,18 @@ import { VoiceChannel, VoiceState } from 'discord.js';
 
 import { NotificationManager, NotificationSound } from './NotificationManager.js';
 
-export enum PomodoroChannelMode
+export enum PomodoroVoiceChannelMode
 {
     Work = 'Work',
     Break = 'Break',
 }
 
-export class PomodoroChannel
+export class PomodoroVoiceChannel
 {
     private _channel: VoiceChannel | null;
     private _workTime: number;
     private _breakTime: number;
-    private _currentMode: PomodoroChannelMode;
+    private _currentMode: PomodoroVoiceChannelMode;
     private _timeLeft: number;
     private _timeoutId: NodeJS.Timeout | null;
     private _intervalId: NodeJS.Timeout | null = null;
@@ -41,14 +41,14 @@ export class PomodoroChannel
         this._breakTime = value;
     }
 
-    public get currentMode(): PomodoroChannelMode
+    public get currentMode(): PomodoroVoiceChannelMode
     {
         return this._currentMode;
     }
 
     public get mute(): boolean
     {
-        return this._currentMode === PomodoroChannelMode.Work;
+        return this._currentMode === PomodoroVoiceChannelMode.Work;
     }
 
     public get timeLeft(): number
@@ -66,7 +66,7 @@ export class PomodoroChannel
         this._channel = channel;
         this._workTime = workTime;
         this._breakTime = breakTime;
-        this._currentMode = PomodoroChannelMode.Break;
+        this._currentMode = PomodoroVoiceChannelMode.Break;
         this._timeLeft = this._breakTime;
         this._timeoutId = setTimeout(this.delete.bind(this), 10_000);
         this.start();
@@ -83,14 +83,14 @@ export class PomodoroChannel
         {
             if (this._timeLeft <= 0)
             {
-                if (this._currentMode !== PomodoroChannelMode.Break)
+                if (this._currentMode !== PomodoroVoiceChannelMode.Break)
                 {
-                    this._currentMode = PomodoroChannelMode.Break;
+                    this._currentMode = PomodoroVoiceChannelMode.Break;
                     this._timeLeft = this._breakTime;
                 }
                 else
                 {
-                    this._currentMode = PomodoroChannelMode.Work;
+                    this._currentMode = PomodoroVoiceChannelMode.Work;
                     this._timeLeft = this._workTime;
                 }
 

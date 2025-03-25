@@ -1,6 +1,6 @@
 import { Client, SlashCommandBuilder } from 'discord.js';
 
-import Pomodoro from './pomodoro/index.js';
+import PomodoroVoiceChannels from './pomodoro-voice-channels/index.js';
 
 export interface IDiscordAppModule
 {
@@ -10,5 +10,5 @@ export interface IDiscordAppModule
 }
 
 export const modules: IDiscordAppModule[] = [
-    new Pomodoro()
+    new PomodoroVoiceChannels()
 ];
