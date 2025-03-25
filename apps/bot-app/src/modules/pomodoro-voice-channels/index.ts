@@ -74,7 +74,7 @@ export default class PomodoroVoiceChannels implements IDiscordAppModule
         const workTimeInput = new TextInputBuilder()
             .setCustomId('workTimeInput')
             .setLabel("Temps de travail en minute :")
-            .setPlaceholder('25')
+            .setPlaceholder('Exemple : 25')
             .setStyle(TextInputStyle.Short)
             .setMinLength(1)
             .setMaxLength(3)
@@ -84,7 +84,7 @@ export default class PomodoroVoiceChannels implements IDiscordAppModule
         const breakTimeInput = new TextInputBuilder()
             .setCustomId('breakTimeInput')
             .setLabel("Temps de pause en minute :")
-            .setPlaceholder('10')
+            .setPlaceholder('Exemple : 10')
             .setStyle(TextInputStyle.Short)
             .setMinLength(1)
             .setMaxLength(3)
@@ -94,7 +94,7 @@ export default class PomodoroVoiceChannels implements IDiscordAppModule
         const userLimitInput = new TextInputBuilder()
             .setCustomId('userLimitInput')
             .setLabel("Nombre maximum de participant :")
-            .setPlaceholder('4')
+            .setPlaceholder('Exemple : 4')
             .setStyle(TextInputStyle.Short)
             .setMinLength(1)
             .setMaxLength(3)
@@ -115,7 +115,7 @@ export default class PomodoroVoiceChannels implements IDiscordAppModule
     private async replyPomodoroCreate(interaction: Interaction): Promise<void>
     {
         if (!interaction.isModalSubmit()) return;
-        
+
         const guild = interaction.guild;
         if (guild != null)
         {

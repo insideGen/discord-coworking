@@ -49,8 +49,10 @@ client.once(Events.ClientReady, (readyClient): void =>
 
 client.on(Events.InteractionCreate, (interaction: Interaction): void =>
 {
+    const username = interaction.user.tag;
+    const commandType = InteractionType[interaction.type];
     const commandId = getCommandId(interaction);
-    console.log(`[Main.Interaction] ${InteractionType[interaction.type]}: ${commandId}`);
+    console.log(`[Main.Interaction] username: ${username}, commandType: ${commandType}, commandId: ${commandId}`);
 });
 
 client.rest.on('rateLimited', (rateLimitInfo): void =>

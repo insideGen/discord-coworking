@@ -67,7 +67,7 @@ export class PomodoroVoiceChannel
         this._workTime = workTime;
         this._breakTime = breakTime;
         this._currentMode = PomodoroVoiceChannelMode.Break;
-        this._timeLeft = this._breakTime;
+        this._timeLeft = this._breakTime - 1;
         this._timeoutId = setTimeout(this.delete.bind(this), 20_000);
     }
 
