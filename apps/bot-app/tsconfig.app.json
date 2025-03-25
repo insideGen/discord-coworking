@@ -2,8 +2,14 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
+    "typeRoots": [
+      "../../node_modules/@types",
+      "./node_modules/@types",
+      "./types"
+    ],
     "types": [
-      "node"
+      "node",
+      "environment"
     ],
     "rootDir": "src",
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
