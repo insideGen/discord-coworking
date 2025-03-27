@@ -1,0 +1,13 @@
+.devcontainer/
+.git/
+.nx/
+.pnpm-store/
+.vscode/
+node_modules/
+tmp/
+.gitignore
+
+**/dist/
+**/.env*
+**/*.md
+**/Dockerfile

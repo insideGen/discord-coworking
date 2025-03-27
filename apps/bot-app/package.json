@@ -24,7 +24,7 @@
             {
               "input": "apps/bot-app/src/modules/pomodoro-voice-channels/assets/",
               "glob": "**/!(*.ts)",
-              "output": "assets"
+              "output": "modules/pomodoro-voice-channels/assets/"
             }
           ],
           "esbuildOptions": {
@@ -64,6 +64,12 @@
             "buildTarget": "@discord-coworking/bot-app:build:production"
           }
         }
+      },
+      "docker-build": {
+        "dependsOn": [
+          "build"
+        ],
+        "command": "docker build --file apps/bot-app/Dockerfile --target runner --tag insideGen/discord-coworking-bot-app ."
       }
     }
   },

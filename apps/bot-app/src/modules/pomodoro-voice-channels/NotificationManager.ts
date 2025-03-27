@@ -1,31 +1,41 @@
-import EventEmitter from 'node:events';
+import path from 'node:path';
+import { EventEmitter } from 'node:events';
 import { VoiceChannel } from 'discord.js';
 import { AudioPlayer, AudioPlayerStatus, createAudioPlayer, createAudioResource, getVoiceConnection, joinVoiceChannel, VoiceConnectionState, VoiceConnectionStatus } from '@discordjs/voice';
 
 export enum NotificationSound
 {
-    Work = 'apps/bot-app/dist/assets/notification.wav',
-    Break = 'apps/bot-app/dist/assets/notification.wav',
+    Work = 'assets/notification.wav',
+    Break = 'assets/notification.wav',
 }
 
-export class VoiceNotification extends EventEmitter<{ finished: []; }>
+export interface VoiceNotificationEvents
 {
-    public readonly voiceChannel: VoiceChannel;
-    public readonly notificationSound: NotificationSound;
-    public readonly audioPlayer: AudioPlayer;
+    finished: [];
+}
+
+export class VoiceNotification extends EventEmitter<VoiceNotificationEvents>
+{
+    public readonly channel: VoiceChannel;
+    public readonly resourcePath: string;
+    public readonly player: AudioPlayer;
 
     public constructor(voiceChannel: VoiceChannel, notificationSound: NotificationSound)
     {
         super();
-        this.voiceChannel = voiceChannel;
-        this.notificationSound = notificationSound;
-        this.audioPlayer = createAudioPlayer();
-        this.audioPlayer.on('stateChange', (oldState, newState) =>
+        this.channel = voiceChannel;
+        this.resourcePath = path.join(import.meta.dirname, notificationSound.toString());
+        this.player = createAudioPlayer();
+        this.player.on('stateChange', (oldState, newState) =>
         {
             if (newState.status === AudioPlayerStatus.AutoPaused || newState.status === AudioPlayerStatus.Idle)
             {
                 this.emit('finished');
             }
+        });
+        this.player.on('error', (error) =>
+        {
+            console.error(`[VoiceNotification] AudioPlayer: ${error.message}`);
         });
     }
 };
@@ -44,24 +54,27 @@ export class NotificationManager
         const voiceNotification = NotificationManager._queue.shift();
         if (voiceNotification != null)
         {
-            let voiceConnection = getVoiceConnection(voiceNotification.voiceChannel.guild.id);
+            let voiceConnection = getVoiceConnection(voiceNotification.channel.guild.id);
             if (voiceConnection == null || voiceConnection.state.status !== VoiceConnectionStatus.Ready)
             {
                 voiceConnection = joinVoiceChannel({
-                    adapterCreator: voiceNotification.voiceChannel.guild.voiceAdapterCreator,
-                    guildId: voiceNotification.voiceChannel.guild.id,
-                    channelId: voiceNotification.voiceChannel.id
+                    adapterCreator: voiceNotification.channel.guild.voiceAdapterCreator,
+                    guildId: voiceNotification.channel.guild.id,
+                    channelId: voiceNotification.channel.id
                 });
             }
             const onStateChange = (oldState: VoiceConnectionState, newState: VoiceConnectionState): void =>
             {
+                console.log(`[NotificationManager] VoiceConnectionState: ${oldState.status} -> ${newState.status}`);
                 if (newState.status === VoiceConnectionStatus.Ready)
                 {
                     voiceConnection.off('stateChange', onStateChange);
-                    const playerSubscription = voiceConnection.subscribe(voiceNotification.audioPlayer);
-                    const resource = createAudioResource(voiceNotification.notificationSound.toString());
-                    voiceNotification.audioPlayer.on('stateChange', (oldState, newState) =>
+                    voiceConnection.off('error', onError);
+                    const playerSubscription = voiceConnection.subscribe(voiceNotification.player);
+                    const resource = createAudioResource(voiceNotification.resourcePath);
+                    voiceNotification.player.on('stateChange', (oldState, newState) =>
                     {
+                        console.log(`[NotificationManager] AudioPlayerState: ${oldState.status} -> ${newState.status}`);
                         if (newState.status === AudioPlayerStatus.AutoPaused || newState.status === AudioPlayerStatus.Idle)
                         {
                             playerSubscription?.unsubscribe();
@@ -76,10 +89,15 @@ export class NotificationManager
                             }
                         }
                     });
-                    voiceNotification.audioPlayer.play(resource);
+                    voiceNotification.player.play(resource);
                 }
             };
+            const onError = (error: Error) =>
+            {
+                console.error(`[NotificationManager] VoiceConnection: ${error.message}`);
+            };
             voiceConnection.on('stateChange', onStateChange);
+            voiceConnection.on('error', onError);
         }
     }
 

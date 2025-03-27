@@ -31,4 +31,8 @@ pnpx nx generate @nx/node:application apps/bot-app
 pnpx nx generate @nx/node:lib packages/discord-ts
 
 pnpm add @discord-coworking/discord-ts --workspace
+
+pnpx nx generate @nx/node:setup-docker
+
+pnpx nx docker-build @discord-coworking/bot-app
 ```
